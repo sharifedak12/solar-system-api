@@ -1,18 +1,7 @@
 from flask import Blueprint, jsonify, abort, make_response
+from app import db
+from ..models.planet import Planet
 
-class Planet:
-    def __init__(self, id, name, description, has_moons):
-        self.id = id
-        self.name = name
-        self.desciption = description
-        self.has_moons = has_moons
-    
-    def to_dict(self):
-        return dict(
-            id=self.id,
-            name=self.name,
-            description=self.desciption,
-            has_moons=self.has_moons)
 
 planets = [
     Planet(1, "Arrakis", "A desert planet, source of Spice.", True),
