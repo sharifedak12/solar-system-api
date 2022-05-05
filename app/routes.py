@@ -37,8 +37,10 @@ def get_planet_record_by_id(id):
 def discover_planet_safely(data_dict):
     try:
         return Planet.create_from_dict(data_dict)
+    except ValueError as err:
+        error_message(f"Invalid key:{err}. Planet not added to database.", 400)
     except KeyError as err:
-        error_message(f"Missing key: {err}", 400)
+        error_message(f"Missing key: {err}.  Planet not added to database.", 400)
 
 
 def update_planet_safely(planet, data_dict):
@@ -107,3 +109,4 @@ def delete_planet(planet_id):
     db.session.commit()
 
     return success_message(f"Planet {planet.name} successfully deleted from the Planets Database.")
+
