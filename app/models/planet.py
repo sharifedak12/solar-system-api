@@ -6,6 +6,11 @@ class Planet(db.Model):
     description = db.Column(db.String, nullable=False)
     has_moons = db.Column(db.Boolean, nullable=False)
     
+    required_attributes = {
+        "name":True,
+        "description":True,
+        "has_moons":True
+    }
     # Instance methods:
 
     def self_to_dict(self):
@@ -27,8 +32,13 @@ class Planet(db.Model):
     
     @classmethod
     def create_from_dict(cls, data_dict):
-        return cls(
+        if data_dict.keys() == cls.required_attributes.keys():
+            return cls(
             name=data_dict["name"],
             description = data_dict["description"],
             has_moons = data_dict["has_moons"]
         )
+        else:
+            remaining_keys= set(data_dict.keys())-set(cls.required_attributes.keys())
+            response=list(remaining_keys)
+            raise ValueError(response)

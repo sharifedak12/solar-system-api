@@ -38,18 +38,18 @@ def discover_planet_safely(data_dict):
     try:
         return Planet.create_from_dict(data_dict)
     except ValueError as err:
-        error_message(f"Invalid key:{err}. Planet not added to database.", 400)
+        error_message(f"Invalid key(s):{err}. Planet not added to database.", 400)
     except KeyError as err:
-        error_message(f"Missing key: {err}.  Planet not added to database.", 400)
+        error_message(f"Missing key(s): {err}.  Planet not added to database.", 400)
 
 
 def update_planet_safely(planet, data_dict):
     try:
         planet.update_self(data_dict)
     except ValueError as err:
-        error_message(f"Invalid key: {err}. Planet not updated.", 400)
+        error_message(f"Invalid key(s): {err}. Planet not updated.", 400)
     except KeyError as err:
-        error_message(f"Missing key: {err}. Planet not updated.", 400)
+        error_message(f"Missing key(s): {err}. Planet not updated.", 400)
 
 
 
@@ -59,9 +59,11 @@ def update_planet_safely(planet, data_dict):
 @planets_bp.route("", methods=["GET"])
 def get_all_planets():
     moon_param = request.args.get("has_moons")
-
+    description_param = request.args.get("description")
     if moon_param:
         planets = Planet.query.filter_by(has_moons=moon_param)
+    if description_param:
+        planets = Planet.query.filter(Planet.description.like('%'+description_param+'%')).all()
     else:
         planets = Planet.query.all()
     
@@ -81,7 +83,7 @@ def read_one_planet(planet_id):
 @planets_bp.route("", methods=["POST"])
 def discover_planet():
     request_body = request.get_json()
-    new_planet = Planet.create_from_dict(request_body)
+    new_planet = discover_planet_safely(request_body)
 
     db.session.add(new_planet)
     db.session.commit()
