@@ -1,16 +1,17 @@
 from app import db
 
-class Planet(db.Model):
+class Moon(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
-    has_moons = db.Column(db.Boolean, nullable=False)
-    moons = db.relationship("Moon", back_populates="planet")
+    planet_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
+    planet = db.relationship("Planet", back_populates="moons")
+    
     
     required_attributes = {
         "name":True,
         "description":True,
-        "has_moons":True
+    
     }
     # Instance methods:
 
@@ -19,7 +20,7 @@ class Planet(db.Model):
             id=self.id,
             name=self.name,
             description=self.description,
-            has_moons=self.has_moons)
+        )
     
     def update_self(self, data_dict):
         for key in data_dict.keys():
@@ -37,7 +38,6 @@ class Planet(db.Model):
             return cls(
             name=data_dict["name"],
             description = data_dict["description"],
-            has_moons = data_dict["has_moons"]
         )
         else:
             remaining_keys= set(data_dict.keys())-set(cls.required_attributes.keys())
