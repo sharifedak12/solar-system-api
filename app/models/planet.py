@@ -36,7 +36,8 @@ class Planet(db.Model):
     
     @classmethod
     def create_from_dict(cls, data_dict):
-        if data_dict.keys() == cls.required_attributes:
+        keys_list = list(data_dict.keys())
+        if keys_list == cls.required_attributes:
             return cls(
             name=data_dict["name"],
             description = data_dict["description"],
