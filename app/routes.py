@@ -61,10 +61,13 @@ def update_planet_safely(planet, data_dict):
 def get_all_planets():
     moon_param = request.args.get("has_moons")
     description_param = request.args.get("description")
-    if moon_param:
-        planets = Planet.query.filter_by(has_moons=moon_param)
-    if description_param:
-        planets = Planet.query.filter(Planet.description.like('%'+description_param+'%')).all()
+    if moon_param and description_param:
+        planets = Planet.query.filter_by(has_moons=moon_param).filter(Planet.description.like('%'+description_param+'%')).all()
+    elif description_param or moon_param:
+        if description_param:
+            planets = Planet.query.filter(Planet.description.like('%'+description_param+'%')).all()
+        else:
+            planets=Planet.query.filter_by(has_moons=moon_param)
     else:
         planets = Planet.query.all()
     

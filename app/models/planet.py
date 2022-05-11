@@ -7,11 +7,8 @@ class Planet(db.Model):
     has_moons = db.Column(db.Boolean, nullable=False)
     moons = db.relationship("Moon", back_populates="planet")
     
-    required_attributes = {
-        "name":True,
-        "description":True,
-        "has_moons":True
-    }
+    required_attributes = ["name","description","has_moons"]
+
     # Instance methods:
 
     def self_to_dict(self):
@@ -24,24 +21,28 @@ class Planet(db.Model):
             moons = list_of_moons)
     
     def update_self(self, data_dict):
+        error_list =[]
         for key in data_dict.keys():
             if hasattr(self, key):
                 setattr(self, key, data_dict[key])
             else:
-                raise ValueError(key)
+                error_list.append(key)
+
+        if error_list:
+            raise ValueError(error_list)
 
 
     # Class methods
     
     @classmethod
     def create_from_dict(cls, data_dict):
-        if data_dict.keys() == cls.required_attributes.keys():
+        if data_dict.keys() == cls.required_attributes:
             return cls(
             name=data_dict["name"],
             description = data_dict["description"],
             has_moons = data_dict["has_moons"]
         )
         else:
-            remaining_keys= set(data_dict.keys())-set(cls.required_attributes.keys())
+            remaining_keys= set(data_dict.keys())-set(cls.required_attributes)
             response=list(remaining_keys)
             raise ValueError(response)
