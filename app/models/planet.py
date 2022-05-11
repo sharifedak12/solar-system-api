@@ -15,11 +15,13 @@ class Planet(db.Model):
     # Instance methods:
 
     def self_to_dict(self):
+        list_of_moons = [moon.self_to_dict() for moon in self.moons]
         return dict(
             id=self.id,
             name=self.name,
             description=self.description,
-            has_moons=self.has_moons)
+            has_moons=self.has_moons,
+            moons = list_of_moons)
     
     def update_self(self, data_dict):
         for key in data_dict.keys():
